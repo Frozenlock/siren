@@ -2,7 +2,6 @@
   (:require [domina :as domina]
             [domina.events :as events]
             [domina.css :as css]
-            [goog.async :as async :refer [Delay]]
             [enfocus.core :as ef]
             [clojure.string :as string])
   (:require-macros [enfocus.macros :as em]))
