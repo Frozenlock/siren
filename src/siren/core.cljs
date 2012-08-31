@@ -32,7 +32,7 @@
 
 (defn- create-siren-box [&[args]]
   (let [class "siren-box"
-        id (gensym)
+        id (name (gensym "siren"))
         style (select-style args)]
     (when-not (domina/by-id "siren-container")
       (create-siren-container))
