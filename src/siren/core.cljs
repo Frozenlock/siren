@@ -48,8 +48,7 @@
   "Apply a succession of tranformations to remove the siren"
   [element]
   (ef/at element
-         (em/chain (em/blur)
-                   (em/fade-out 800)
+         (em/chain (em/fade-out 800)
                    (em/resize :curwidth 0 300 #(domina/destroy! element)))))
 
 
