@@ -4,7 +4,7 @@
 
   Based on [[https://github.com/levand/domina][domina]] and [[https://github.com/ckirkendall/enfocus][enfocus]].
 
-  To use: =[siren "0.1.1"]= in your project dependencies.
+  To use: =[siren "0.1.2"]= in your project dependencies.
 
   Comes with two default color scheme: light and dark. You can of
   course give your own, either with CSS (the =siren-box= class) or by
