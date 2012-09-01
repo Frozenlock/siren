@@ -4,7 +4,7 @@
 
   Based on [[https://github.com/levand/domina][domina]] and [[https://github.com/ckirkendall/enfocus][enfocus]].
 
-  To use: =[siren "0.1.2"]= in your project dependencies.
+  To use: =[siren "0.1.3"]= in your project dependencies.
 
   Comes with two default color scheme: light and dark. You can of
   course give your own, either with CSS (the =siren-box= class) or by
@@ -13,15 +13,15 @@
 ** Usage
 
 #+BEGIN_SRC
-(sticky-siren! "I'm dark!")
+(sticky-siren! "Hello!")
 (siren! {:content "I'm dark!})
 (siren! {:content "I'm light!" :style :light})
 (siren! {:html-content "<div>I'm light!</div><div>And complex!</div>" :style :light})
 #+END_SRC
    [[./siren/raw/master/siren.jpg]]
 
-   The =sticky-siren!= will remain until discarded with =remove-siren= or
-   =remove-all-sirens=.
+   The =sticky-siren!= will remain until discarded with =remove-siren!= or
+   =remove-all-sirens!=.
    
    You can set the content of a siren however you like. Either
    directly, as =(siren! "Hey I'm content!")= or as direct HTML data:
@@ -32,18 +32,21 @@
    Or by setting the CSS.
 
    Here are the possible options:
-   - :style :: :dark, :light, :css or your own style in the form ={:background "grey" :padding "10px"}=
-   - :html-content :: Any HTML content. Divs, spans, floats...
-   - :content :: A string, if you are happy with the default appearance.
-   - :delay :: Time in ms before the siren is discarded.
+   - :style
+     - :dark, :light, :css or your own style in the form ={:background "grey" :padding "10px"}=
+   - :html-content
+     - Any HTML content. Divs, spans, floats...
+   - :content
+     - A string, if you are happy with the default appearance.
+   - :delay
+     - Time in ms before the siren is discarded.
 
 : (siren! {:html-content "<div>Oy!</div> :style {:width "300px" :color "white" :background "black"} :delay 3000})
 *** Complex input
 
-    Siren is as friendly as possible; which mean you can send it
-    directly what HTML you would like in it. You can send HTML with
-    multiple =div= if you want to do so. You can also use [[https://github.com/cgrand/enlive][enlive]]
-    templates. How about some image in the siren?
+    Siren will accept raw HTML. You can send HTML with multiple =div=
+    if you want to do so. You can also use [[https://github.com/cgrand/enlive][enlive]] templates. How about
+    some image in the siren?
 
     To customize an existing siren box, use the =set-siren-content=
     function.

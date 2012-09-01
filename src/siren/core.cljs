@@ -7,7 +7,23 @@
   (:require-macros [enfocus.macros :as em]))
 
 
-(defn- create-siren-container []
+;; ====================== We need a little 'X' close button =====================
+
+(defn add-close-button! [element]
+  (let [id (name (gensym "siren-close"))]
+    (domina/append! element (str "<div class=\"siren-close-button\" id=\""id"\"><b>X</b></div>"))
+    (let [close-button (domina/by-id id)]
+      (domina/set-styles! close-button
+                          {:position "absolute" :top "-10px" :left "-10px" :border-radius "20px"
+                           :background "inherit" :padding "3px" :width "20px" :height "20px" :opacity "0"
+                           :line-height "20px" :text-align "center" :cursor "pointer"})
+      (events/listen! close-button :click #(remove-siren! element))
+      (events/listen! element :mouseover #(ef/at close-button (em/fade-in 150)))
+      (events/listen! element :mouseout #(ef/at close-button (em/fade-out 150))))))
+
+;;============================ Main Siren functions =============================
+
+(defn- create-siren-container! []
   (let [id "siren-container"]
     (domina/append! (domina.css/sel "body") (str "<div id=\"" id "\"></div>"))
     (-> (domina/by-id id)
@@ -16,32 +32,33 @@
 
 (defn- select-style [&[{:keys [style]}]]
   ":dark, :light, or :custom (if you intend to use CSS to modify the siren appearance)."
-  (let [base-style {:font-size "15px" :margin "10px"  :opacity "0" :width "300px"
+  (let [base-style {:font-size "15px" :margin "10px"  :opacity "0" :width "300px" :position "relative"
                     :padding "10px" :border-radius "10px" :box-shadow "5px 5px 10px black"}
         dark (merge base-style {:background "rgba(0, 0, 0, 0.7)" :color "white"})
         light (merge base-style {:background "rgba(255, 255, 255, 0.7)" :color "black"})
         css {}]
     (get {:dark dark :light light :css css} style (or style dark))))
 
-(defn set-siren-content [element &[{:keys [content html-content]}]]
+(defn set-siren-content! [element &[{:keys [content html-content]}]]
   (ef/at element (if html-content
                    (em/html-content html-content)
                    (em/content content))))
    
   
 
-(defn- create-siren-box [&[args]]
+(defn- create-siren-box! [&[args]]
   (let [class "siren-box"
         id (name (gensym "siren"))
         style (select-style args)]
     (when-not (domina/by-id "siren-container")
-      (create-siren-container))
+      (create-siren-container!))
     (domina/append! (domina/by-id "siren-container")
                     (str "<div id=\"" id "\" class=\"" class "\">Siren!</div>"))
     (let [element (-> (domina/by-id id)
                       (domina/set-styles! style))]
+      (set-siren-content! element args)
+      (add-close-button! element)
       (ef/at element (em/fade-in 150))
-      (set-siren-content element args)
       element)))
                   
 (defn remove-siren!
@@ -64,8 +81,8 @@
   removed."
   [content-or-options]
   (if (string? content-or-options)
-    (create-siren-box {:content content-or-options})
-    (create-siren-box content-or-options)))
+    (create-siren-box! {:content content-or-options})
+    (create-siren-box! content-or-options)))
 
 (defn siren!
   "Create a siren box that will disappear in a given time"
