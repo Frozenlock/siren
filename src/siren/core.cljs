@@ -18,8 +18,8 @@
                            :background "inherit" :padding "3px" :width "20px" :height "20px" :opacity "0"
                            :line-height "20px" :text-align "center" :cursor "pointer"})
       (events/listen! close-button :click #(remove-siren! element))
-      (events/listen! element :mouseover #(ef/at close-button (em/fade-in 150)))
-      (events/listen! element :mouseout #(ef/at close-button (em/fade-out 150))))))
+      (ef/at element (em/listen :mouseenter #(ef/at close-button (em/fade-in 150))))
+      (ef/at element(em/listen :mouseleave #(ef/at close-button (em/fade-out 150)))))))
 
 ;;============================ Main Siren functions =============================
 
@@ -32,7 +32,7 @@
 
 (defn- select-style [&[{:keys [style]}]]
   ":dark, :light, or :custom (if you intend to use CSS to modify the siren appearance)."
-  (let [base-style {:font-size "15px" :margin "10px"  :opacity "0" :width "300px" :position "relative"
+  (let [base-style {:font-size "15px" :margin "10px" :opacity "0" :width "300px" :position "relative"
                     :padding "10px" :border-radius "10px" :box-shadow "5px 5px 10px black"}
         dark (merge base-style {:background "rgba(0, 0, 0, 0.7)" :color "white"})
         light (merge base-style {:background "rgba(255, 255, 255, 0.7)" :color "black"})
@@ -87,7 +87,8 @@
   [element]
   (ef/at element
          (em/chain (em/fade-out 500)
-                   (em/resize :curwidth 0 300 #(domina/destroy! element)))))
+                   (em/resize :curwidth 0 300 #(domina/destroy! element) #(* % % % %)))))
+;; the acceleration is used to hide any margin that can't be removed by a resize
 
 (defn replace-siren!
   "Replace an existing siren box by keeping the same position. Return
@@ -104,8 +105,6 @@
     new-siren))
 
 
-;; Weird move behavior while resizing is caused by a bug in enfocus.
-;; Hopefully this will get fixed soon.
 (defn remove-all-sirens!
   "Remove every siren on the screen, even the sticky ones."
   []
