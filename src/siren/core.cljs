@@ -39,34 +39,69 @@
         css {}]
     (get {:dark dark :light light :css css} style (or style dark))))
 
-(defn set-siren-content! [element &[{:keys [content html-content]}]]
+
+(defn- set-siren-content!
+  ;; Now private. User should use 'replace-siren!' instead.
+  "Set the siren content and add a close button (which is part of the
+  content)"[element &[{:keys [content html-content]}]]
   (ef/at element (if html-content
                    (em/html-content html-content)
-                   (em/content content))))
-   
-  
+                   (em/content content)))
+  (add-close-button! element)
+  element)
 
-(defn- create-siren-box! [&[args]]
-  (let [class "siren-box"
+
+(defn- create-siren-box! [&[content-or-options]]
+  (let [args (if (string? content-or-options) {:content content-or-options}
+                 content-or-options)
+        class "siren-box"
         id (name (gensym "siren"))
         style (select-style args)]
     (when-not (domina/by-id "siren-container")
       (create-siren-container!))
     (domina/append! (domina/by-id "siren-container")
                     (str "<div id=\"" id "\" class=\"" class "\">Siren!</div>"))
-    (let [element (-> (domina/by-id id)
-                      (domina/set-styles! style))]
+    (let [element (domina/by-id id)]
+      (domina/set-styles! element style)
       (set-siren-content! element args)
-      (add-close-button! element)
-      (ef/at element (em/fade-in 150))
       element)))
-                  
+  
+(defn- create-and-show-siren-box! [content-or-options]
+  (let [element (create-siren-box! content-or-options)]
+    (ef/at element (em/fade-in 150))
+    element))
+
+(defn- add-timeout! [element content-or-options]
+  (let [delay (or (:delay content-or-options) 2000)]
+    (ef/setTimeout #(remove-siren! element) delay)
+    (domina/set-data! element :timeout delay)
+    element))
+
+(defn- exists?
+  "Check if an element is still around"
+  [element]
+  (if (.-parentNode element) true))
+
 (defn remove-siren!
   "Apply a succession of tranformations to remove the siren"
   [element]
   (ef/at element
-         (em/chain (em/fade-out 800)
+         (em/chain (em/fade-out 500)
                    (em/resize :curwidth 0 300 #(domina/destroy! element)))))
+
+(defn replace-siren!
+  "Replace an existing siren box by keeping the same position. Return
+  the new siren. The new siren will have the same initial timeout
+  before disappearing (unless it's a sticky one). If you want to avoid
+  surprise instantaneous resizing, you should specify a size in the
+  style." [old-siren &[content-or-options]]
+  (let [new-siren (create-siren-box! content-or-options)
+        timeout (domina/get-data old-siren :timeout)]
+    (domina/insert-after! old-siren new-siren)
+    (domina/destroy! old-siren)
+    (domina/set-styles! new-siren {:opacity "1"})
+    (when timeout (add-timeout! new-siren {:delay timeout}))
+    new-siren))
 
 
 ;; Weird move behavior while resizing is caused by a bug in enfocus.
@@ -80,13 +115,21 @@
   "Creates a siren box without any timer. Will stay there until
   removed."
   [content-or-options]
-  (if (string? content-or-options)
-    (create-siren-box! {:content content-or-options})
-    (create-siren-box! content-or-options)))
+  (create-and-show-siren-box! content-or-options))
 
 (defn siren!
-  "Create a siren box that will disappear in a given time"
+  "Create a siren box that will disappear in a given time. To override
+  the default time, use the {:delay time-in-ms} form."
   [content-or-options]
-  (let [siren (sticky-siren! content-or-options)]
-    (ef/setTimeout #(remove-siren! siren) (or delay (or (:delay content-or-options) 2000)))
-    siren))
+  (-> (sticky-siren! content-or-options)
+      (add-timeout! content-or-options)))
+
+(defn continuous-siren-factory
+  "Return a function that will always act on the same siren if it
+  exists. Otherwise, it will create a new one"[]
+  (let [siren-element (atom [""])]
+    (fn [content-or-options]
+      (if (exists? (first @siren-element))
+        (swap! siren-element #(vector (replace-siren! % content-or-options)))
+        (swap! siren-element #(vector (siren! content-or-options)))))))
+
