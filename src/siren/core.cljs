@@ -9,6 +9,8 @@
 
 ;; ====================== We need a little 'X' close button =====================
 
+(declare remove-siren!)
+
 (defn add-close-button! [element]
   (let [id (name (gensym "siren-close"))]
     (domina/append! element (str "<div class=\"siren-close-button\" id=\""id"\"><b>X</b></div>"))
