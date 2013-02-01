@@ -18,7 +18,7 @@
 (siren! {:content "I'm light!" :style :light})
 (siren! {:html-content "<div>I'm light!</div><div>And complex!</div>" :style :light})
 #+END_SRC
-   [[./siren/raw/master/siren.jpg]]
+   [[./siren.jpg]]
 
    The =sticky-siren!= will remain until discarded with =remove-siren!= or
    =remove-all-sirens!=.
