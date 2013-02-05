@@ -4,7 +4,7 @@
 
   Based on [[https://github.com/levand/domina][domina]] and [[https://github.com/ckirkendall/enfocus][enfocus]].
 
-  To use: =[siren "0.1.7"]= in your project dependencies.
+  To use: =[siren "0.2.0"]= in your project dependencies.
 
   Comes with two default color scheme: light and dark. You can of
   course give your own, either with CSS (the =siren-box= class) or by
@@ -16,7 +16,8 @@
 (sticky-siren! "Hello!")
 (siren! {:content "I'm dark!})
 (siren! {:content "I'm light!" :style :light})
-(siren! {:html-content "<div>I'm light!</div><div>And complex!</div>" :style :light})
+(siren! {:content "<div>I'm light!</div><div>And complex!</div>" :style :light})
+(siren! (domina/by-id "some-id"))
 #+END_SRC
    [[./siren.jpg]]
 
@@ -25,23 +26,23 @@
    
    You can set the content of a siren however you like. Either
    directly, as =(siren! "Hey I'm content!")= or as direct HTML data:
-   =(siren! {:html-content "<div>Oh, really?</div>"})=.
+   =(siren! {:content "<div>Oh, really?</div>"})=.
    
    The style can be set by giving it directly to the siren
 : (siren! {:style {:width "300px" :color "grey"} :content "Oy!"})
-   Or by setting the CSS.
-
-   Here are the possible options:
+   The variable =base-style= is available in the siren namespace.
+: (siren! {:style (merge base-style {:width "300px" :color "grey"}) :content "Oy!"})
+   You can also create your own CSS for the class =siren-box=.
+   
+   Here are the possible siren options:
    - :style
      - :dark, :light, :css or your own style in the form ={:background "grey" :padding "10px"}=
-   - :html-content
-     - Any HTML content. Divs, spans, floats...
    - :content
-     - A string, if you are happy with the default appearance.
+     - A string or a html element.
    - :delay
      - Time in ms before the siren is discarded.
 
-: (siren! {:html-content "<div>Oy!</div> :style {:width "300px" :color "white" :background "black"} :delay 3000})
+: (siren! {:content "<div>Oy!</div> :style {:width "300px" :color "white" :background "black"} :delay 3000})
 *** Complex input
 
     Siren will accept raw HTML. You can send HTML with multiple =div=

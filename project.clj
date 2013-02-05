@@ -1,4 +1,4 @@
-(defproject siren "0.1.7"
+(defproject siren "0.2.0"
   :description "Easy notifications, Growl style (Clojurescript)"
   :source-path "src"
   :license {:name "Eclipse Public License"
@@ -6,13 +6,9 @@
   :dependencies [[org.clojure/clojure "1.4.0"]
                  [domina "1.0.0"]
                  [enfocus "1.0.0-alpha3"]]
-  :profiles {:dev {:dependencies [[org.clojure/clojurescript "0.0-1450"]
-                                  [org.clojure/google-closure-library "0.0-1376-2"]
-                                  [org.clojure/google-closure-library-third-party "0.0-1376-2"]]}}
-  :plugins [[lein-cljsbuild "0.2.5"]]
+  :plugins [[lein-cljsbuild "0.3.0"]]
   :cljsbuild {:builds [{:source-path "src"
                         :jar true
-                        :compiler {:libs ["goog/dom/query.js"]
-                                   :pretty-print true
+                        :compiler {:pretty-print true
                                    :output-dir ".cljsbuild/siren"
                                    :output-to "public/siren.js"}}]})
