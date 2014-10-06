@@ -1,4 +1,4 @@
-(defproject siren "0.2.0"
+(defproject siren "0.2.1"
             :description "Easy notifications, Growl style (Clojurescript)"
             :source-path "src"
             :license {:name "Eclipse Public License"
