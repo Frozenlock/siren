@@ -3,9 +3,8 @@
             [domina.events :as events]
             [domina.css :as css]
             [enfocus.core :as ef]
-            [clojure.string :as string])
-  (:require-macros [enfocus.macros :as em]))
-
+            [enfocus.effects :as eff]
+            [enfocus.events :as efe]))
 
 ;; ====================== We need a little 'X' close button =====================
 
@@ -20,8 +19,8 @@
                          :background "inherit" :padding "3px" :width "20px" :height "20px" :opacity "0"
                          :line-height "20px" :text-align "center" :cursor "pointer"})
     (events/listen! close-button :click #(remove-siren! element))
-    (ef/at element (em/listen :mouseenter #(ef/at close-button (em/fade-in 150))))
-    (ef/at element(em/listen :mouseleave #(ef/at close-button (em/fade-out 150))))
+    (ef/at element (efe/listen :mouseenter #(ef/at close-button (eff/fade-in 150))))
+    (ef/at element(efe/listen :mouseleave #(ef/at close-button (eff/fade-out 150))))
     element))
 
 ;;============================ Main Siren functions =============================
@@ -67,7 +66,7 @@
   
 (defn- create-and-show-siren-box! [content-or-options]
   (let [element (create-siren-box! content-or-options)]
-    (ef/at element (em/fade-in 150))
+    (ef/at element (eff/fade-in 150))
     element))
 
 (defn- add-timeout! [element content-or-options]
@@ -85,8 +84,8 @@
   "Apply a succession of tranformations to remove the siren"
   [element]
   (ef/at element
-         (em/chain (em/fade-out 500)
-                   (em/resize :curwidth 0 300 #(domina/destroy! element) #(* % % % %)))))
+         (eff/chain (eff/fade-out 500)
+                   (eff/resize :curwidth 0 300 #(domina/destroy! element) #(* % % % %)))))
 ;; the acceleration is used to hide any margin that can't be removed by a resize
 
 (defn replace-siren!
